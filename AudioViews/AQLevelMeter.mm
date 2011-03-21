@@ -66,7 +66,7 @@ Copyright (C) 2009 Apple Inc. All Rights Reserved.
 @synthesize vertical = _vertical;
 
 - (id)initWithFrame:(CGRect)frame {
-	if (self = [super initWithFrame:frame]) {
+	if ((self = [super initWithFrame:frame])) {
 		_refreshHz = 1. / 30.;
 		_showsPeaks = YES;
 		_channelNumbers = [[NSArray alloc] initWithObjects:[NSNumber numberWithInt:0], nil];
@@ -83,7 +83,7 @@ Copyright (C) 2009 Apple Inc. All Rights Reserved.
 
 
 - (id)initWithCoder:(NSCoder *)coder {
-	if (self = [super initWithCoder:coder]) {
+	if ((self = [super initWithCoder:coder])) {
 		_refreshHz = 1. / 30.;
 		_showsPeaks = YES;
 		_channelNumbers = [[NSArray alloc] initWithObjects:[NSNumber numberWithInt:0], nil];

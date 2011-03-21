@@ -170,13 +170,13 @@ Copyright (C) 2009 Apple Inc. All Rights Reserved.
 	
 	if (_vertical)
 	{
-		glTranslatef(0., [self bounds].size.height, 0.);
+		glTranslatef(0., _backingHeight, 0.);
 		glScalef(1., -1., 1.);
-		bds = [self bounds];
+		bds = CGRectMake(0., 0., _backingWidth, _backingHeight);
 	} else {
-		glTranslatef(0., [self bounds].size.height, 0.);
+		glTranslatef(0., _backingHeight, 0.);
 		glRotatef(-90., 0., 0., 1.);
-		bds = CGRectMake(0., 0., [self bounds].size.height, [self bounds].size.width);
+		bds = CGRectMake(0., 0., _backingHeight, _backingWidth);
 	}
 	
 	

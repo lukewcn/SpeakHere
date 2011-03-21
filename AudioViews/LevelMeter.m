@@ -87,8 +87,8 @@ int _cmp_levelThresholds(const void * a, const void * b)
 
 - (id)initWithFrame:(CGRect)frame
 {
-	if (self = [super initWithFrame:frame]) {
-		[self _performInit];
+	if ((self = [super initWithFrame:frame])) {
+        [self _performInit];
 	}
 	return self;
 }
@@ -96,7 +96,7 @@ int _cmp_levelThresholds(const void * a, const void * b)
 
 - (id)initWithCoder:(NSCoder *)coder
 {
-	if (self = [super initWithCoder:coder]) {
+	if ((self = [super initWithCoder:coder])) {
 		[self _performInit];
 	}
 	return self;
