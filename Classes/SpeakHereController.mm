@@ -255,7 +255,7 @@ void propListener(	void *                  inClientData,
 	player = new AQPlayer();
 		
 	OSStatus error = AudioSessionInitialize(NULL, NULL, interruptionListener, self);
-	if (error) printf("ERROR INITIALIZING AUDIO SESSION! %d\n", error);
+	if (error) printf("ERROR INITIALIZING AUDIO SESSION! %ld\n", error);
 	else 
 	{
 		UInt32 category = kAudioSessionCategory_PlayAndRecord;	
@@ -263,18 +263,18 @@ void propListener(	void *                  inClientData,
 		if (error) printf("couldn't set audio category!");
 									
 		error = AudioSessionAddPropertyListener(kAudioSessionProperty_AudioRouteChange, propListener, self);
-		if (error) printf("ERROR ADDING AUDIO SESSION PROP LISTENER! %d\n", error);
+		if (error) printf("ERROR ADDING AUDIO SESSION PROP LISTENER! %ld\n", error);
 		UInt32 inputAvailable = 0;
 		UInt32 size = sizeof(inputAvailable);
 		
 		// we do not want to allow recording if input is not available
 		error = AudioSessionGetProperty(kAudioSessionProperty_AudioInputAvailable, &size, &inputAvailable);
-		if (error) printf("ERROR GETTING INPUT AVAILABILITY! %d\n", error);
+		if (error) printf("ERROR GETTING INPUT AVAILABILITY! %ld\n", error);
 		btn_record.enabled = (inputAvailable) ? YES : NO;
 		
 		// we also need to listen to see if input availability changes
 		error = AudioSessionAddPropertyListener(kAudioSessionProperty_AudioInputAvailable, propListener, self);
-		if (error) printf("ERROR ADDING AUDIO SESSION PROP LISTENER! %d\n", error);
+		if (error) printf("ERROR ADDING AUDIO SESSION PROP LISTENER! %ld\n", error);
 
 		error = AudioSessionSetActive(true); 
 		if (error) printf("AudioSessionSetActive (true) failed");
