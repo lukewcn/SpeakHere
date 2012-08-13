@@ -257,3 +257,15 @@ void AQRecorder::StopRecord()
 	AudioQueueDispose(mQueue, true);
 	AudioFileClose(mRecordFile);
 }
+
+void AQRecorder::resume()
+{
+    mIsRunning = true;
+    AudioQueueStart(mQueue, NULL);
+}
+
+void AQRecorder::pause()
+{
+    mIsRunning = false;
+    AudioQueuePause(mQueue);
+}
