@@ -49,6 +49,7 @@ Copyright (C) 2009 Apple Inc. All Rights Reserved.
 
 #import "SpeakHereAppDelegate.h"
 #import "SpeakHereViewController.h"
+#import <AudioToolbox/AudioToolbox.h>
 
 @implementation SpeakHereAppDelegate
 
@@ -61,6 +62,20 @@ Copyright (C) 2009 Apple Inc. All Rights Reserved.
     // Override point for customization after app launch    
     [window addSubview:viewController.view];
     [window makeKeyAndVisible];
+}
+
+- (void) applicationDidBecomeActive:(UIApplication *)application {
+    // Reactivate
+    AudioSessionSetActive(true);
+}
+
+- (void) applicationDidEnterBackground:(UIApplication *)application {
+    // App crashes if audio session is not deactivated
+    AudioSessionSetActive(false);
+}
+
+- (void) applicationWillResignActive:(UIApplication *)application {
+    AudioSessionSetActive(false);
 }
 
 

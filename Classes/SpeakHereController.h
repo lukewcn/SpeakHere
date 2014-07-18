@@ -65,6 +65,7 @@ Copyright (C) 2009 Apple Inc. All Rights Reserved.
 	AQPlayer*					player;
 	AQRecorder*					recorder;
 	BOOL						playbackWasInterrupted;
+ 	BOOL						recordingWasInterrupted;
 	BOOL						playbackWasPaused;
 	
 	CFStringRef					recordFilePath;	

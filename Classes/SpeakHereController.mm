@@ -166,27 +166,39 @@ char *OSTypeToStr(char *buf, OSType t)
 
 #pragma mark AudioSession listeners
 void interruptionListener(	void *	inClientData,
-							UInt32	inInterruptionState)
+                          UInt32	inInterruptionState)
 {
 	SpeakHereController *THIS = (SpeakHereController*)inClientData;
 	if (inInterruptionState == kAudioSessionBeginInterruption)
 	{
-		if (THIS->recorder->IsRunning()) {
-			[THIS stopRecord];
-		}
-		else if (THIS->player->IsRunning()) {
+        if (THIS->player->IsRunning()) {
 			//the queue will stop itself on an interruption, we just need to update the UI
 			[[NSNotificationCenter defaultCenter] postNotificationName:@"playbackQueueStopped" object:THIS];
 			THIS->playbackWasInterrupted = YES;
 		}
+        
+        if (THIS->recorder->IsRunning()) {
+            //the queue will stop itself on an interruption, we just need to update the UI
+            THIS->recorder->pause();
+			[[NSNotificationCenter defaultCenter] postNotificationName:@"recordingQueueStopped" object:THIS];
+			THIS->recordingWasInterrupted = YES;
+		}
 	}
-	else if ((inInterruptionState == kAudioSessionEndInterruption) && THIS->playbackWasInterrupted)
-	{
-		// we were playing back when we were interrupted, so reset and resume now
-		THIS->player->StartQueue(true);
-		[[NSNotificationCenter defaultCenter] postNotificationName:@"playbackQueueResumed" object:THIS];
-		THIS->playbackWasInterrupted = NO;
-	}
+	else if (inInterruptionState == kAudioSessionEndInterruption) {
+        if (THIS->playbackWasInterrupted)
+        {
+            // we were playing back when we were interrupted, so reset and resume now
+            THIS->player->StartQueue(true);
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"playbackQueueResumed" object:THIS];
+            THIS->playbackWasInterrupted = NO;
+        }
+        
+        if (THIS->recordingWasInterrupted) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"recordingQueueResumed" object:THIS];
+            THIS->playbackWasInterrupted = NO;
+            THIS->recorder->resume();
+        }
+    }
 }
 
 void propListener(	void *                  inClientData,
@@ -282,6 +294,9 @@ void propListener(	void *                  inClientData,
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackQueueStopped:) name:@"playbackQueueStopped" object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackQueueResumed:) name:@"playbackQueueResumed" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(recordingQueueStopped:) name:@"recordingQueueStopped" object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(recordingQueueResumed:) name:@"recordingQueueResumed" object:nil];
 
 	UIColor *bgColor = [[UIColor alloc] initWithRed:.39 green:.44 blue:.57 alpha:.5];
 	[lvlMeter_in setBackgroundColor:bgColor];
@@ -297,6 +312,7 @@ void propListener(	void *                  inClientData,
 # pragma mark Notification routines
 - (void)playbackQueueStopped:(NSNotification *)note
 {
+     NSLog(@"playbackkQueueStopped");
 	btn_play.title = @"Play";
 	[lvlMeter_in setAq: nil];
 	btn_record.enabled = YES;
@@ -304,9 +320,27 @@ void propListener(	void *                  inClientData,
 
 - (void)playbackQueueResumed:(NSNotification *)note
 {
+    NSLog(@"playbackQueueResumed");
 	btn_play.title = @"Stop";
 	btn_record.enabled = NO;
 	[lvlMeter_in setAq: player->Queue()];
+}
+
+- (void)recordingQueueStopped:(NSNotification *)note
+{
+    NSLog(@"recordingQueueStopped");
+ 	btn_record.title = @"Record";
+	[lvlMeter_in setAq: nil];
+ 	btn_play.enabled = YES;
+}
+
+- (void)recordingQueueResumed:(NSNotification *)note
+{
+    btn_record.title = @"Stop";
+	btn_play.enabled = NO;
+    NSLog(@"recordingQueueResumed");
+	[lvlMeter_in setAq: recorder->Queue()];
+    // benvium: not sure what the buttton should say in this case
 }
 
 #pragma mark Cleanup

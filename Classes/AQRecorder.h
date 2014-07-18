@@ -70,6 +70,10 @@ class AQRecorder
 		void			StartRecord(CFStringRef inRecordFile);
 		void			StopRecord();		
 		Boolean			IsRunning() const			{ return mIsRunning; }
+        
+        // benivum: 13-08-2012
+        void            pause();
+        void            resume();
 		
 		UInt64			startTime;
 				
